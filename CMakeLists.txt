@@ -45,6 +45,11 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     
+    #.C files
+    Core/Src/task_handlers.c
+    Core/Src/rtc.c
+    Core/Src/led_effect.c
+
     #RTOS sources
     common/ThirdParty/FreeRTOS/croutine.c
     common/ThirdParty/FreeRTOS/event_groups.c
