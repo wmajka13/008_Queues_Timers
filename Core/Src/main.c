@@ -162,6 +162,9 @@ int main(void)
   handle_queue_input_data = xQueueCreate(10, sizeof( size_t ));   // SIZE OF A POINTER
   configASSERT( handle_queue_input_data != NULL );
 
+  //TODO: ADD UART RECEIVE BEFORE SCHEDULER
+  // HAL_StatusTypeDef HAL_UART_Receive_IT(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size)
+
   // vTaskStartScheduler();
   /* USER CODE END 2 */
 
@@ -322,6 +325,12 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+  //TODO: CONTINUE WRITING HERE
+  //TODO: ADD TODO EXTENSION
+}
+
 
 /* USER CODE END 4 */
 
