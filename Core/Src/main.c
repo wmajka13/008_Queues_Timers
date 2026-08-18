@@ -64,11 +64,6 @@ static void MX_RTC_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
-void menu_task( void *pvParameters );
-void led_task( void *pvParameters );
-void rtc_task( void *pvParameters );
-void print_task( void *pvParameters );
-void command_handling_task( void *pvParameters );
 
 /* USER CODE END PFP */
 
@@ -164,7 +159,7 @@ int main(void)
   handle_queue_print = xQueueCreate(10, sizeof( char ));
   configASSERT( handle_queue_print != NULL );
 
-  handle_queue_input_data = xQueueCreate(10, 10);
+  handle_queue_input_data = xQueueCreate(10, sizeof( size_t ));   // SIZE OF A POINTER
   configASSERT( handle_queue_input_data != NULL );
 
   // vTaskStartScheduler();

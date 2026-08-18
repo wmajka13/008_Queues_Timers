@@ -54,6 +54,12 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 
+void menu_task( void *pvParameters );
+void led_task( void *pvParameters );
+void rtc_task( void *pvParameters );
+void print_task( void *pvParameters );
+void command_handling_task( void *pvParameters );
+
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
