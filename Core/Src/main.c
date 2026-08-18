@@ -18,10 +18,16 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
 
+#include "FreeRTOSConfig.h"
+
+
+#include "stdio.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,12 +48,20 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+TaskHandle_t handle_menu_task, handle_led_task, handle_rtc_task, handle_print_task, handle_command_handling_task;
+QueueHandle_t handle_print_queue, handle_input_data_queue;
 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
+
+void menu_task( void *pvParameters );
+void led_task( void *pvParameters );
+void rtc_task( void *pvParameters );
+void print_task( void *pvParameters );
+void command_handling_task( void *pvParameters );
 
 /* USER CODE END PFP */
 
@@ -85,7 +99,71 @@ int main(void)
 
   /* Initialize all configured peripherals */
   /* USER CODE BEGIN 2 */
+  BaseType_t status;
 
+  status = xTaskCreate(
+    menu_task,
+    "menu_task",
+    250,
+    NULL,
+    2,
+    &handle_menu_task
+  );
+  configASSERT(status == pdPASS);
+
+  status = xTaskCreate(
+    led_task,
+    "led_task",
+    250,
+    NULL,
+    2,
+    &handle_led_task
+  );
+  configASSERT(status == pdPASS);
+
+  status = xTaskCreate(
+    rtc_task,
+    "rtc_task",
+    250,
+    NULL,
+    2,
+    &handle_rtc_task
+  );
+  configASSERT(status == pdPASS);
+
+  status = xTaskCreate(
+    print_task,
+    "print_task",
+    250,
+    NULL,
+    2,
+    &handle_print_task
+  );
+  configASSERT(status == pdPASS);
+
+  status = xTaskCreate(
+    command_handling_task,
+    "command_handling_task",
+    250,
+    NULL,
+    2,
+    &handle_command_handling_task
+  );
+  configASSERT(status == pdPASS);
+
+  handle_print_queue = xQueueCreate(10, 10);
+  if( handle_print_queue == NULL )
+  {
+    for( ;; ) {}
+  }
+
+  handle_input_data_queue = xQueueCreate(10, 10);
+  if( handle_input_data_queue == NULL )
+  {
+    for( ;; ) {}
+  }
+
+  // vTaskStartScheduler();
   /* USER CODE END 2 */
 
   /* Infinite loop */
