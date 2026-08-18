@@ -143,7 +143,5 @@ standard names. */
 #define configRECORD_STACK_HIGH_ADDRESS         1 /* Opcjonalne, ale bardzo przydatne do sprawdzania, czy stos nie przepełnia się (Stack Overflow) */
 
 /* USER CODE END Defines */
-// #define configUSE_TRACE_FACILITY 1
-#include "SEGGER_SYSVIEW_FreeRTOS.h"
 
 #endif /* FREERTOS_CONFIG_H */

@@ -62,16 +62,6 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     common/ThirdParty/FreeRTOS/portable/port.c
     common/ThirdParty/FreeRTOS/portable/MemMang/heap_4.c
 
-    #SEGGER sources
-    common/ThirdParty/SEGGER/Config/SEGGER_SYSVIEW_Config_FreeRTOS.c
-    common/ThirdParty/SEGGER/Core/SEGGER_RTT_printf.c
-    common/ThirdParty/SEGGER/Core/SEGGER_RTT.c
-    common/ThirdParty/SEGGER/Core/SEGGER_SYSVIEW.c
-    common/ThirdParty/SEGGER/OS/SEGGER_SYSVIEW_FreeRTOS.c
-    common/ThirdParty/SEGGER/Port/segger_uart.c
-    
-    # Plik asemblera z optymalizacjami dla ARMv7M
-    common/ThirdParty/SEGGER/Core/SEGGER_RTT_ASM_ARMv7M.S
 )
 
 # Add include paths
