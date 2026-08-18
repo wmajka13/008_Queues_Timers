@@ -161,17 +161,11 @@ int main(void)
   );
   configASSERT(status == pdPASS);
 
-  handle_print_queue = xQueueCreate(10, 10);
-  if( handle_print_queue == NULL )
-  {
-    for( ;; ) {}
-  }
+  handle_print_queue = xQueueCreate(10, sizeof( char ));
+  configASSERT( handle_print_queue != NULL );
 
   handle_input_data_queue = xQueueCreate(10, 10);
-  if( handle_input_data_queue == NULL )
-  {
-    for( ;; ) {}
-  }
+  configASSERT( handle_input_data_queue != NULL );
 
   // vTaskStartScheduler();
   /* USER CODE END 2 */
