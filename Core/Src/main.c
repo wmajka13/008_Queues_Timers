@@ -52,8 +52,8 @@ RTC_HandleTypeDef hrtc;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-TaskHandle_t handle_menu_task, handle_led_task, handle_rtc_task, handle_print_task, handle_command_handling_task;
-QueueHandle_t handle_print_queue, handle_input_data_queue;
+TaskHandle_t handle_task_menu, handle_task_led, handle_task_rtc, handle_task_print, handle_task_command_handling;
+QueueHandle_t handle_queue_print, handle_queue_input_data;
 
 /* USER CODE END PV */
 
@@ -117,7 +117,7 @@ int main(void)
     250,
     NULL,
     2,
-    &handle_menu_task
+    &handle_task_menu
   );
   configASSERT(status == pdPASS);
 
@@ -127,7 +127,7 @@ int main(void)
     250,
     NULL,
     2,
-    &handle_led_task
+    &handle_task_led
   );
   configASSERT(status == pdPASS);
 
@@ -137,7 +137,7 @@ int main(void)
     250,
     NULL,
     2,
-    &handle_rtc_task
+    &handle_task_rtc
   );
   configASSERT(status == pdPASS);
 
@@ -147,7 +147,7 @@ int main(void)
     250,
     NULL,
     2,
-    &handle_print_task
+    &handle_task_print
   );
   configASSERT(status == pdPASS);
 
@@ -157,15 +157,15 @@ int main(void)
     250,
     NULL,
     2,
-    &handle_command_handling_task
+    &handle_task_command_handling
   );
   configASSERT(status == pdPASS);
 
-  handle_print_queue = xQueueCreate(10, sizeof( char ));
-  configASSERT( handle_print_queue != NULL );
+  handle_queue_print = xQueueCreate(10, sizeof( char ));
+  configASSERT( handle_queue_print != NULL );
 
-  handle_input_data_queue = xQueueCreate(10, 10);
-  configASSERT( handle_input_data_queue != NULL );
+  handle_queue_input_data = xQueueCreate(10, 10);
+  configASSERT( handle_queue_input_data != NULL );
 
   // vTaskStartScheduler();
   /* USER CODE END 2 */
