@@ -1,17 +1,31 @@
 #include "main.h"
-#include "portmacro.h"
+
+const char *msg_inv = "////Invalid option////\n";
 
 void menu_task( void *pvParameters ) 
 { 
+	const char* msg_menu = "\n========================\n"
+							"|         Menu         |\n"
+							"========================\n"
+							"LED effect    ----> 0\n"
+							"Date and time ----> 1\n"
+							"Exit          ----> 2\n"
+							"Enter your choice here : ";
+
 	for( ;; )
 	{
-	//  -- Task application code here. --
 	}
-	// vTaskDelete( NULL ); 
+	vTaskDelete( NULL ); 
 }
 
 void led_task( void *pvParameters ) 
 { 
+	const char* msg_led = "========================\n"
+						  "|      LED Effect     |\n"
+						  "========================\n"
+						  "(none,e1,e2,e3,e4)\n"
+						  "Enter your choice here : ";
+
 	for( ;; )
 	{
 	//  -- Task application code here. --
@@ -21,6 +35,29 @@ void led_task( void *pvParameters )
 
 void rtc_task( void *pvParameters ) 
 { 
+	const char* msg_rtc1 = "========================\n"
+							"|         RTC          |\n"
+							"========================\n";
+
+	const char* msg_rtc2 = "Configure Time            ----> 0\n"
+							"Configure Date            ----> 1\n"
+							"Enable reporting          ----> 2\n"
+							"Exit                      ----> 3\n"
+							"Enter your choice here : ";
+
+
+	const char *msg_rtc_hh = "Enter hour(1-12):";
+	const char *msg_rtc_mm = "Enter minutes(0-59):";
+	const char *msg_rtc_ss = "Enter seconds(0-59):";
+
+	const char *msg_rtc_dd  = "Enter date(1-31):";
+	const char *msg_rtc_mo  ="Enter month(1-12):";
+	const char *msg_rtc_dow  = "Enter day(1-7 sun:1):";
+	const char *msg_rtc_yr  = "Enter year(0-99):";
+
+	const char *msg_conf = "Configuration successful\n";
+	const char *msg_rtc_report = "Enable time&date reporting(y/n)?: ";
+
 	for( ;; )
 	{
 	//  -- Task application code here. --
@@ -45,7 +82,7 @@ void command_handling_task( void *pvParameters )
 		xTaskNotifyWait(0, 0, NULL, portMAX_DELAY);
 		process_command(&cmd);
 	}
-	// vTaskDelete( NULL ); 
+	vTaskDelete( NULL ); 
 }
 
 void process_command(command_t *cmd)
