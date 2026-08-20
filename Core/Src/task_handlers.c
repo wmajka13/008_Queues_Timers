@@ -1,9 +1,15 @@
 #include "main.h"
+#include "stm32f4xx_hal_def.h"
+#include <stdint.h>
 
 const char *msg_inv = "////Invalid option////\n";
 
 void menu_task( void *pvParameters ) 
 { 
+	uint32_t cmd_addr;
+	command_t *cmd;
+	int option;
+
 	const char* msg_menu = "\n========================\n"
 							"|         Menu         |\n"
 							"========================\n"
@@ -14,6 +20,44 @@ void menu_task( void *pvParameters )
 
 	for( ;; )
 	{
+		xQueueSend(handle_queue_print, &msg_menu, portMAX_DELAY);
+
+		xTaskNotifyWait(0, 0, &cmd_addr, portMAX_DELAY);
+
+		cmd = (command_t*) cmd_addr;
+
+		if( cmd->len == 1 )
+		{
+			option = cmd->payload[0] - '0';
+
+			switch (option)
+			{
+			case 0:
+				curr_state = S_LED_EFFECT;
+				xTaskNotify(handle_task_led, 0, eNoAction);
+				break;
+			
+			case 1:
+				curr_state = S_RTC_MENU;
+				xTaskNotify(handle_task_rtc, 0, eNoAction);
+				break;
+				
+			case 2:
+				// TODO: Implement exit
+				break;
+
+			default:
+				xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
+				continue;
+			}
+
+		} else
+		{
+			//INVALID OPTION
+			xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
+		}
+
+		xTaskNotifyWait(0, 0, NULL, portMAX_DELAY);
 	}
 	vTaskDelete( NULL ); 
 }
