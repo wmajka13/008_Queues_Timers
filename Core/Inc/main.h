@@ -32,6 +32,9 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdint.h>
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -64,7 +67,8 @@ extern TaskHandle_t handle_task_menu, handle_task_led, handle_task_rtc, handle_t
 extern QueueHandle_t handle_queue_print, handle_queue_input_data;
 
 extern volatile uint8_t user_data;
-extern volatile char message[10];
+extern volatile state_t curr_state;
+
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
@@ -78,6 +82,8 @@ void rtc_task( void *pvParameters );
 void print_task( void *pvParameters );
 void command_handling_task( void *pvParameters );
 
+int extract_command(command_t *cmd);
+void process_command(command_t *cmd);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/

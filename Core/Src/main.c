@@ -57,8 +57,8 @@ TaskHandle_t handle_task_menu, handle_task_led, handle_task_rtc, handle_task_pri
 QueueHandle_t handle_queue_print, handle_queue_input_data;
 
 volatile uint8_t user_data;
-volatile char message[10];
 
+volatile state_t curr_state = S_MAIN_MENU;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
