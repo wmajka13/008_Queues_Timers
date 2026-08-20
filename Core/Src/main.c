@@ -328,8 +328,30 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-  //TODO: CONTINUE WRITING HERE
-  //TODO: ADD TODO EXTENSION
+    BaseType_t xHigherPriorityTaskWoken;
+    xHigherPriorityTaskWoken = pdFALSE;
+
+  if( xQueueIsQueueFullFromISR(handle_queue_input_data) == pdFALSE )
+	{
+		/*Queue is not full */
+    xQueueSendFromISR(handle_queue_input_data, (void *) &user_data, &xHigherPriorityTaskWoken);
+
+	}else{
+		/*Queue is full */
+
+		if( user_data == '\n' )
+		{
+			/*user_data = '\n' */
+      xQueueOverwriteFromISR(handle_queue_input_data, (void *) &user_data, &xHigherPriorityTaskWoken);
+    }
+	}
+
+  if( user_data == '\n' )
+  {
+    xTaskNotifyFromISR(handle_task_command_handling, 0, eNoAction, &xHigherPriorityTaskWoken);
+  }
+
+  HAL_UART_Receive_IT(&huart2, &user_data, 1);
 }
 
 
