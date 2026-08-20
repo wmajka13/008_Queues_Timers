@@ -55,6 +55,8 @@ UART_HandleTypeDef huart2;
 TaskHandle_t handle_task_menu, handle_task_led, handle_task_rtc, handle_task_print, handle_task_command_handling;
 QueueHandle_t handle_queue_print, handle_queue_input_data;
 
+volatile uint8_t user_data;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -162,8 +164,7 @@ int main(void)
   handle_queue_input_data = xQueueCreate(10, sizeof( size_t ));   // SIZE OF A POINTER
   configASSERT( handle_queue_input_data != NULL );
 
-  //TODO: ADD UART RECEIVE BEFORE SCHEDULER
-  // HAL_StatusTypeDef HAL_UART_Receive_IT(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size)
+  HAL_UART_Receive_IT(&huart2, &user_data, 1);
 
   // vTaskStartScheduler();
   /* USER CODE END 2 */
