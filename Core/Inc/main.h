@@ -31,11 +31,25 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdint.h>
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
+
+typedef enum {
+  S_MAIN_MENU,
+  S_LED_EFFECT,
+  S_RTC_MENU,
+  S_RTC_TIME_CONFIG,
+  S_RTC_DATE_CONFIG,
+  S_RTC_REPORT,
+} state_t;
+
+typedef struct {
+  uint8_t payload[10];
+  uint8_t len;
+} command_t;
 
 /* USER CODE END ET */
 
@@ -46,7 +60,11 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
+extern TaskHandle_t handle_task_menu, handle_task_led, handle_task_rtc, handle_task_print, handle_task_command_handling;
+extern QueueHandle_t handle_queue_print, handle_queue_input_data;
 
+extern volatile uint8_t user_data;
+extern volatile char message[10];
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
