@@ -34,6 +34,20 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
+typedef enum {
+  S_MAIN_MENU,
+  S_LED_EFFECT,
+  S_RTC_MENU,
+  S_RTC_TIME_CONFIG,
+  S_RTC_DATE_CONFIG,
+  S_RTC_REPORT,
+} state_t;
+
+typedef struct {
+  uint8_t payload[10];
+  uint8_t len;
+} command_t;
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
