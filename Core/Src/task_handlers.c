@@ -1,8 +1,10 @@
 #include "main.h"
 #include "stm32f4xx_hal_def.h"
 #include <stdint.h>
+#include <string.h>
 
 const char *msg_inv = "////Invalid option////\n";
+
 
 void menu_task( void *pvParameters ) 
 { 
@@ -64,6 +66,9 @@ void menu_task( void *pvParameters )
 
 void led_task( void *pvParameters ) 
 { 
+	uint32_t cmd_addr;
+	command_t *cmd;
+
 	const char* msg_led = "========================\n"
 						  "|      LED Effect     |\n"
 						  "========================\n"
@@ -72,7 +77,22 @@ void led_task( void *pvParameters )
 
 	for( ;; )
 	{
-	//  -- Task application code here. --
+		xQueueSend(handle_queue_print, &msg_led, portMAX_DELAY);
+
+		xTaskNotifyWait(0, 0, &cmd_addr, portMAX_DELAY);
+
+		cmd = (command_t *) cmd_addr;
+
+		if( strcmp( (char*) cmd->payload, "none"))	led_effect_stop();
+		else if ( strcmp( (char*) cmd->payload, "e1"))	led_effect_1();
+		else if ( strcmp( (char*) cmd->payload, "e2"))	led_effect_2();
+		else if ( strcmp( (char*) cmd->payload, "e3"))	led_effect_3();
+		else if ( strcmp( (char*) cmd->payload, "e4"))	led_effect_4();
+		else xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
+	
+		curr_state = S_MAIN_MENU;
+
+		xTaskNotify(handle_task_menu, 0, eNoAction);
 	}
 	// vTaskDelete( NULL ); 
 }
@@ -173,3 +193,4 @@ int extract_command(command_t *cmd)
 
 	return 0;
 }
+
