@@ -32,6 +32,8 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdint.h>
+#include <string.h>
+
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
@@ -86,11 +88,9 @@ void command_handling_task( void *pvParameters );
 int extract_command(command_t *cmd);
 void process_command(command_t *cmd);
 
-void led_effect_stop();
-void led_effect_1();
-void led_effect_2();
-void led_effect_3();
-void led_effect_4();
+void led_effect_stop(void);
+void led_effect(uint8_t effect);
+
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/

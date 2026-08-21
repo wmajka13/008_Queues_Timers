@@ -84,10 +84,10 @@ void led_task( void *pvParameters )
 		cmd = (command_t *) cmd_addr;
 
 		if( strcmp( (char*) cmd->payload, "none"))	led_effect_stop();
-		else if ( strcmp( (char*) cmd->payload, "e1"))	led_effect_1();
-		else if ( strcmp( (char*) cmd->payload, "e2"))	led_effect_2();
-		else if ( strcmp( (char*) cmd->payload, "e3"))	led_effect_3();
-		else if ( strcmp( (char*) cmd->payload, "e4"))	led_effect_4();
+		else if ( strcmp( (char*) cmd->payload, "e1"))	led_effect(1);
+		else if ( strcmp( (char*) cmd->payload, "e2"))	led_effect(2);
+		else if ( strcmp( (char*) cmd->payload, "e3"))	led_effect(3);
+		else if ( strcmp( (char*) cmd->payload, "e4"))	led_effect(4);
 		else xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
 	
 		curr_state = S_MAIN_MENU;
