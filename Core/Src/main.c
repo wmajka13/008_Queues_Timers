@@ -24,6 +24,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
+#include "timers.h"
 
 #include "FreeRTOSConfig.h"
 
@@ -59,6 +60,8 @@ QueueHandle_t handle_queue_print, handle_queue_input_data;
 volatile uint8_t user_data;
 
 volatile state_t curr_state = S_MAIN_MENU;
+
+TimerHandle_t handle_led_timers[4];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -166,7 +169,12 @@ int main(void)
   handle_queue_input_data = xQueueCreate(10, sizeof( size_t ));   // SIZE OF A POINTER
   configASSERT( handle_queue_input_data != NULL );
 
-  HAL_UART_Receive_IT(&huart2, &user_data, 1);
+  for( uint8_t i= 0; i < 4; i++ )
+  {
+    handle_led_timers[i] = xTimerCreate("LED_Timer", pdMS_TO_TICKS(500), pdTRUE, (void*)(i+1), LED_Timer_Callback);
+  }
+
+  HAL_UART_Receive_IT(&huart2, (uint8_t*) &user_data, 1);
 
   // vTaskStartScheduler();
   /* USER CODE END 2 */
@@ -328,6 +336,32 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void LED_Timer_Callback( TimerHandle_t xTimer )
+{
+  uint32_t id;
+  id = (uint32_t) pvTimerGetTimerID(xTimer);
+
+  switch (id)
+  {
+  case 1:
+    led_effect_1();
+    break;
+  
+  case 2:
+    led_effect_2();
+    break;
+    
+  case 3:
+    led_effect_3();
+    break;
+    
+  case 4:
+    led_effect_4();
+    break;
+  }
+}
+
+
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
     BaseType_t xHigherPriorityTaskWoken;
@@ -353,7 +387,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     xTaskNotifyFromISR(handle_task_command_handling, 0, eNoAction, &xHigherPriorityTaskWoken);
   }
 
-  HAL_UART_Receive_IT(&huart2, &user_data, 1);
+  HAL_UART_Receive_IT(&huart2, (uint8_t*) &user_data, 1);
 }
 
 

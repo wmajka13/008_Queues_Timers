@@ -37,6 +37,7 @@ extern "C" {
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
+#include "timers.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -72,6 +73,8 @@ extern QueueHandle_t handle_queue_print, handle_queue_input_data;
 extern volatile uint8_t user_data;
 extern volatile state_t curr_state;
 
+extern TimerHandle_t handle_led_timers[4];
+
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
@@ -89,7 +92,14 @@ int extract_command(command_t *cmd);
 void process_command(command_t *cmd);
 
 void led_effect_stop(void);
-void led_effect(uint8_t effect);
+void led_effect(uint8_t n);
+
+void led_effect_1(void);
+void led_effect_2(void);
+void led_effect_3(void);
+void led_effect_4(void);
+
+void LED_Timer_Callback( TimerHandle_t xTimer );
 
 /* USER CODE END EFP */
 
