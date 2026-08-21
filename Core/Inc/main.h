@@ -94,6 +94,8 @@ void led_effect(uint8_t effect);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define WHITE_LED_Pin GPIO_PIN_3
+#define WHITE_LED_GPIO_Port GPIOA
 #define GREEN_LED_Pin GPIO_PIN_5
 #define GREEN_LED_GPIO_Port GPIOA
 #define RED_LED_Pin GPIO_PIN_6
