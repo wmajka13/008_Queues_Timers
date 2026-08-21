@@ -75,6 +75,8 @@ extern volatile state_t curr_state;
 
 extern TimerHandle_t handle_led_timers[4];
 
+extern UART_HandleTypeDef huart2;
+
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/

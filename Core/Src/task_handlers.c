@@ -1,5 +1,6 @@
 #include "main.h"
 #include "stm32f4xx_hal_def.h"
+#include "stm32f4xx_hal_uart.h"
 #include <stdint.h>
 #include <string.h>
 
@@ -131,11 +132,13 @@ void rtc_task( void *pvParameters )
 
 void print_task( void *pvParameters ) 
 { 
+	uint32_t *msg;
 	for( ;; )
 	{
-	//  -- Task application code here. --
+		xQueueReceive(handle_queue_print, &msg, portMAX_DELAY);
+		HAL_UART_Transmit(&huart2, (uint8_t*) msg, strlen((char*)msg), HAL_MAX_DELAY);
 	}
-	// vTaskDelete( NULL ); 
+	vTaskDelete( NULL ); 
 }
 
 void command_handling_task( void *pvParameters ) 
