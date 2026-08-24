@@ -58,6 +58,7 @@ void menu_task( void *pvParameters )
 		{
 			//INVALID OPTION
 			xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
+			continue;
 		}
 
 		xTaskNotifyWait(0, 0, NULL, portMAX_DELAY);
