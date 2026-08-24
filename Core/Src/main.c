@@ -133,15 +133,15 @@ int main(void)
   );
   configASSERT(status == pdPASS);
 
-  status = xTaskCreate(
-    rtc_task,
-    "rtc_task",
-    250,
-    NULL,
-    2,
-    &handle_task_rtc
-  );
-  configASSERT(status == pdPASS);
+  // status = xTaskCreate(
+  //   rtc_task,
+  //   "rtc_task",
+  //   250,
+  //   NULL,
+  //   2,
+  //   &handle_task_rtc
+  // );
+  // configASSERT(status == pdPASS);
 
   status = xTaskCreate(
     print_task,
@@ -163,7 +163,7 @@ int main(void)
   );
   configASSERT(status == pdPASS);
 
-  handle_queue_print = xQueueCreate(10, sizeof( char ));
+  handle_queue_print = xQueueCreate(10, sizeof( char* ));
   configASSERT( handle_queue_print != NULL );
 
   handle_queue_input_data = xQueueCreate(10, sizeof( size_t ));   // SIZE OF A POINTER
@@ -176,7 +176,7 @@ int main(void)
 
   HAL_UART_Receive_IT(&huart2, (uint8_t*) &user_data, 1);
 
-  // vTaskStartScheduler();
+  vTaskStartScheduler();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -321,10 +321,10 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4|GREEN_LED_Pin|RED_LED_Pin|BLUE_LED_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, WHITE_LED_Pin|GREEN_LED_Pin|RED_LED_Pin|BLUE_LED_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : PA4 GREEN_LED_Pin RED_LED_Pin BLUE_LED_Pin */
-  GPIO_InitStruct.Pin = GPIO_PIN_4|GREEN_LED_Pin|RED_LED_Pin|BLUE_LED_Pin;
+  /*Configure GPIO pins : WHITE_LED_Pin GREEN_LED_Pin RED_LED_Pin BLUE_LED_Pin */
+  GPIO_InitStruct.Pin = WHITE_LED_Pin|GREEN_LED_Pin|RED_LED_Pin|BLUE_LED_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

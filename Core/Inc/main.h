@@ -106,7 +106,7 @@ void LED_Timer_Callback( TimerHandle_t xTimer );
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define WHITE_LED_Pin GPIO_PIN_3
+#define WHITE_LED_Pin GPIO_PIN_4
 #define WHITE_LED_GPIO_Port GPIOA
 #define GREEN_LED_Pin GPIO_PIN_5
 #define GREEN_LED_GPIO_Port GPIOA
