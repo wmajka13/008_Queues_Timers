@@ -81,10 +81,9 @@ void led_effect_3(void)
         break;
     case 3:
         HAL_GPIO_WritePin(WHITE_LED_GPIO_Port, WHITE_LED_Pin, SET);
-        current_led = 0;
         break;
     }
-    current_led += 1;
+    current_led = (current_led == 3) ? 0 : current_led + 1;
 }
 
 void led_effect_4(void)
@@ -96,7 +95,6 @@ void led_effect_4(void)
     {
     case 0:
         HAL_GPIO_WritePin(GREEN_LED_GPIO_Port, GREEN_LED_Pin, SET);
-        current_led = 3;
         break;
     case 1:
         HAL_GPIO_WritePin(RED_LED_GPIO_Port, RED_LED_Pin, SET);
@@ -108,5 +106,6 @@ void led_effect_4(void)
         HAL_GPIO_WritePin(WHITE_LED_GPIO_Port, WHITE_LED_Pin, SET);
         break;
     }
-    current_led -= 1;
+    current_led = (current_led == 0) ? 3 : current_led - 1;
+
 }
