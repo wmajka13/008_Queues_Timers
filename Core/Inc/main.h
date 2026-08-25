@@ -76,6 +76,7 @@ extern volatile state_t curr_state;
 extern TimerHandle_t handle_led_timers[4];
 
 extern UART_HandleTypeDef huart2;
+extern RTC_HandleTypeDef hrtc;
 
 /* USER CODE END EM */
 
@@ -102,6 +103,12 @@ void led_effect_3(void);
 void led_effect_4(void);
 
 void LED_Timer_Callback( TimerHandle_t xTimer );
+
+void rtc_configure_time(RTC_TimeTypeDef *time);
+void rtc_configure_date(RTC_DateTypeDef *date);
+
+void show_time_date(void);
+
 
 /* USER CODE END EFP */
 

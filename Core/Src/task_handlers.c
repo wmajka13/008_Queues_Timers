@@ -1,4 +1,5 @@
 #include "main.h"
+#include "portmacro.h"
 #include "stm32f4xx_hal_def.h"
 #include "stm32f4xx_hal_uart.h"
 #include <stdint.h>
@@ -102,7 +103,7 @@ void led_task( void *pvParameters )
 }
 
 void rtc_task( void *pvParameters ) 
-{ 
+{
 	const char* msg_rtc1 = "========================\n"
 							"|         RTC          |\n"
 							"========================\n";
@@ -110,7 +111,7 @@ void rtc_task( void *pvParameters )
 	const char* msg_rtc2 = "Configure Time            ----> 0\n"
 							"Configure Date            ----> 1\n"
 							"Enable reporting          ----> 2\n"
-							"Exit                      ----> 3\n"
+							"Exit                      ----> 4\n"
 							"Enter your choice here : ";
 
 
@@ -126,13 +127,57 @@ void rtc_task( void *pvParameters )
 	const char *msg_conf = "Configuration successful\n";
 	const char *msg_rtc_report = "Enable time&date reporting(y/n)?: ";
 
-	for( ;; )
-	{
-	//  -- Task application code here. --
-	}
-	// vTaskDelete( NULL ); 
-}
 
+	uint32_t cmd_addr;
+	command_t *cmd;
+
+
+	for(;;){
+		/*TODO: Notify wait (wait till someone notifies) */
+		xTaskNotifyWait(0, 0, NULL, portMAX_DELAY);
+
+		/*TODO : Print the menu and show current date and time information */
+		xQueueSend(handle_queue_print, (void*) &msg_rtc1, portMAX_DELAY);
+		
+
+		while(curr_state != S_MAIN_MENU){
+
+			/*TODO: Wait for command notification (Notify wait) */
+
+			switch(curr_state)
+			{
+				case S_RTC_MENU:{
+
+					/*TODO: process RTC menu commands */
+					break;}
+
+				case S_RTC_TIME_CONFIG:{
+					/*TODO : get hh, mm, ss infor and configure RTC */
+
+					/*TODO: take care of invalid entries */
+					break;}
+
+				case S_RTC_DATE_CONFIG:{
+
+					/*TODO : get date, month, day , year info and configure RTC */
+
+					/*TODO: take care of invalid entries */
+
+					break;}
+
+				case S_RTC_REPORT:{
+					/*TODO: enable or disable RTC current time reporting over ITM printf */
+					break;}
+
+			}// switch end
+
+		} //while end
+
+		   /*TODO : Notify menu task */
+
+
+		}//while super loop end
+}
 void print_task( void *pvParameters ) 
 { 
 	uint32_t *msg;
