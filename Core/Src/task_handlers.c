@@ -1,6 +1,7 @@
 #include "main.h"
 #include "portmacro.h"
 #include "stm32f4xx_hal_def.h"
+#include "stm32f4xx_hal_rtc.h"
 #include "stm32f4xx_hal_uart.h"
 #include <stdint.h>
 #include <string.h>
@@ -111,7 +112,7 @@ void rtc_task( void *pvParameters )
 	const char* msg_rtc2 = "Configure Time            ----> 0\n"
 							"Configure Date            ----> 1\n"
 							"Enable reporting          ----> 2\n"
-							"Exit                      ----> 4\n"
+							"Exit                      ----> 3\n"
 							"Enter your choice here : ";
 
 
@@ -131,43 +132,75 @@ void rtc_task( void *pvParameters )
 	uint32_t cmd_addr;
 	command_t *cmd;
 
+	RTC_TimeTypeDef time = {0};
+	RTC_DateTypeDef date = {0};
+
+	(void)time;
+	(void)date;
 
 	for(;;){
-		/*TODO: Notify wait (wait till someone notifies) */
+		/*Notify wait (wait till someone notifies) */
 		xTaskNotifyWait(0, 0, NULL, portMAX_DELAY);
 
-		/*TODO : Print the menu and show current date and time information */
+		/*Print the menu and show current date and time information */
 		xQueueSend(handle_queue_print, (void*) &msg_rtc1, portMAX_DELAY);
+		xQueueSend(handle_queue_print, (void*) &msg_rtc2, portMAX_DELAY);
+
+		show_time_date();
 		
 
 		while(curr_state != S_MAIN_MENU){
 
-			/*TODO: Wait for command notification (Notify wait) */
+			/*Wait for command notification (Notify wait) */
+			xTaskNotifyWait(0, 0, &cmd_addr, portMAX_DELAY);
+			cmd = (command_t*) cmd_addr;
 
 			switch(curr_state)
 			{
-				case S_RTC_MENU:{
+				case S_RTC_MENU:
 
-					/*TODO: process RTC menu commands */
-					break;}
+					/*process RTC menu commands */
+					if ( ! strcmp( (char*) cmd->payload, "0")) curr_state = S_RTC_TIME_CONFIG;
+					else if ( ! strcmp( (char*) cmd->payload, "1"))	curr_state = S_RTC_DATE_CONFIG;
+					else if ( ! strcmp( (char*) cmd->payload, "2"))	curr_state = S_RTC_REPORT;
+					else if ( ! strcmp( (char*) cmd->payload, "3"))	curr_state = S_MAIN_MENU;
+					else xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
 
-				case S_RTC_TIME_CONFIG:{
-					/*TODO : get hh, mm, ss infor and configure RTC */
+					break;
 
-					/*TODO: take care of invalid entries */
-					break;}
+				case S_RTC_TIME_CONFIG:
 
-				case S_RTC_DATE_CONFIG:{
+					//TODO: TEST THIS!
+					/*get hh, mm, ss infor and configure RTC */
+					xQueueSend(handle_queue_print, (void*) &msg_rtc_hh, portMAX_DELAY);
+					xTaskNotifyWait(0, 0, &cmd_addr, portMAX_DELAY);
+					cmd = (command_t*) cmd_addr;
+
+					int hh_int = atoi((char*) cmd->payload);
+
+					/*take care of invalid entries */
+					if(hh_int >= 1 && hh_int <= 12)
+						time.Hours = hh_int;
+					else 
+						xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
+
+
+					break;
+
+				case S_RTC_DATE_CONFIG:
 
 					/*TODO : get date, month, day , year info and configure RTC */
 
 					/*TODO: take care of invalid entries */
 
-					break;}
+					break;
 
-				case S_RTC_REPORT:{
+				case S_RTC_REPORT:
 					/*TODO: enable or disable RTC current time reporting over ITM printf */
-					break;}
+					break;
+
+				default:
+					break;
 
 			}// switch end
 
@@ -178,6 +211,7 @@ void rtc_task( void *pvParameters )
 
 		}//while super loop end
 }
+
 void print_task( void *pvParameters ) 
 { 
 	uint32_t *msg;
@@ -222,7 +256,6 @@ void process_command(command_t *cmd)
 		break;
 	}
 }
-
 
 int extract_command(command_t *cmd)
 {
