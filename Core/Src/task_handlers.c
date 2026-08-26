@@ -135,7 +135,7 @@ void rtc_task( void *pvParameters )
 	RTC_TimeTypeDef time = {0};
 	RTC_DateTypeDef date = {0};
 
-	int hh_mm_ss_int;
+	int payload_as_int;
 
 	(void)date;
 
@@ -163,60 +163,121 @@ void rtc_task( void *pvParameters )
 					{
 						curr_state = S_RTC_TIME_CONFIG;
 						xQueueSend(handle_queue_print, (void*) &msg_rtc_hh, portMAX_DELAY);
-					}
-					else if ( ! strcmp( (char*) cmd->payload, "1"))	curr_state = S_RTC_DATE_CONFIG;
-					else if ( ! strcmp( (char*) cmd->payload, "2"))	curr_state = S_RTC_REPORT;
+
+					} else if ( ! strcmp( (char*) cmd->payload, "1"))	
+					{
+						curr_state = S_RTC_DATE_CONFIG;
+						xQueueSend(handle_queue_print, (void*) &msg_rtc_dd, portMAX_DELAY);
+
+					} else if ( ! strcmp( (char*) cmd->payload, "2"))	curr_state = S_RTC_REPORT;
 					else if ( ! strcmp( (char*) cmd->payload, "3"))	curr_state = S_MAIN_MENU;
 					else xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
 
 					break;
 
 				case S_RTC_TIME_CONFIG:
-
-					//TODO: TEST THIS!
 					/*get hh, mm, ss infor and configure RTC */
 
-				hh_mm_ss_int = atoi((char*) cmd->payload);
+					payload_as_int = atoi((char*) cmd->payload);
 
-					if(hh_mm_ss_int >= 1 && hh_mm_ss_int <= 12)
+					if(payload_as_int >= 1 && payload_as_int <= 12)
 					{
-						time.Hours = hh_mm_ss_int;
+						time.Hours = payload_as_int;
 						xQueueSend(handle_queue_print, (void*) &msg_rtc_mm, portMAX_DELAY);
 					} else xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
 
+
 					xTaskNotifyWait(0, 0, &cmd_addr, portMAX_DELAY);
 					cmd = (command_t*) cmd_addr;
+					payload_as_int = atoi((char*) cmd->payload);
 
-					hh_mm_ss_int = atoi((char*) cmd->payload);
-
-					if(hh_mm_ss_int >= 0 && hh_mm_ss_int <= 59)
+					if(payload_as_int >= 0 && payload_as_int <= 59)
 					{
-						time.Minutes = hh_mm_ss_int;
+						time.Minutes = payload_as_int;
 						xQueueSend(handle_queue_print, (void*) &msg_rtc_ss, portMAX_DELAY);
 						
 					} else xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
 
+
 					xTaskNotifyWait(0, 0, &cmd_addr, portMAX_DELAY);
 					cmd = (command_t*) cmd_addr;
+					payload_as_int = atoi((char*) cmd->payload);
 
-					hh_mm_ss_int = atoi((char*) cmd->payload);
-
-					if(hh_mm_ss_int >= 0 && hh_mm_ss_int <= 59)
+					if(payload_as_int >= 0 && payload_as_int <= 59)
 					{
-						time.Seconds = hh_mm_ss_int;
+						time.Seconds = payload_as_int;
 					} else xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
 
-					HAL_RTC_SetTime(&hrtc, &time, RTC_FORMAT_BIN);
-
+					rtc_configure_time(&time);
 					curr_state = S_MAIN_MENU;
 
 					break;
 
 				case S_RTC_DATE_CONFIG:
 
-					/*TODO : get date, month, day , year info and configure RTC */
+					/*get date, month, day , year info and configure RTC */
+					payload_as_int = atoi((char*) cmd->payload);
 
-					/*TODO: take care of invalid entries */
+					if(payload_as_int >= 1 && payload_as_int <= 31)
+					{
+						date.Date = payload_as_int;
+						xQueueSend(handle_queue_print, (void*) &msg_rtc_mo, portMAX_DELAY);
+					} else 
+					{
+						xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
+						curr_state = S_MAIN_MENU;
+						break;
+					}
+
+
+					xTaskNotifyWait(0, 0, &cmd_addr, portMAX_DELAY);
+					cmd = (command_t*) cmd_addr;
+					payload_as_int = atoi((char*) cmd->payload);
+
+					if(payload_as_int >= 1 && payload_as_int <= 12)
+					{
+						date.Month = payload_as_int;
+						xQueueSend(handle_queue_print, (void*) &msg_rtc_dow, portMAX_DELAY);
+					} else 
+					{
+						xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
+						curr_state = S_MAIN_MENU;
+						break;
+					}
+					
+
+					xTaskNotifyWait(0, 0, &cmd_addr, portMAX_DELAY);
+					cmd = (command_t*) cmd_addr;
+					payload_as_int = atoi((char*) cmd->payload);
+
+					if(payload_as_int >= 1 && payload_as_int <= 7)
+					{
+						date.WeekDay = payload_as_int;
+						xQueueSend(handle_queue_print, (void*) &msg_rtc_yr, portMAX_DELAY);
+					} else 
+					{
+						xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
+						curr_state = S_MAIN_MENU;
+						break;
+					}
+
+
+					xTaskNotifyWait(0, 0, &cmd_addr, portMAX_DELAY);
+					cmd = (command_t*) cmd_addr;
+					payload_as_int = atoi((char*) cmd->payload);
+
+					if(payload_as_int >= 1 && payload_as_int <= 99)
+					{
+						date.Year = payload_as_int;
+					} else 
+					{
+						xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
+						curr_state = S_MAIN_MENU;
+						break;
+					}
+
+					rtc_configure_date(&date);
+					curr_state = S_MAIN_MENU;
 
 					break;
 
@@ -225,6 +286,7 @@ void rtc_task( void *pvParameters )
 					break;
 
 				default:
+					curr_state = S_MAIN_MENU;
 					break;
 
 			}// switch end
