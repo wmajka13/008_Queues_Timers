@@ -133,15 +133,15 @@ int main(void)
   );
   configASSERT(status == pdPASS);
 
-  // status = xTaskCreate(
-  //   rtc_task,
-  //   "rtc_task",
-  //   250,
-  //   NULL,
-  //   2,
-  //   &handle_task_rtc
-  // );
-  // configASSERT(status == pdPASS);
+  status = xTaskCreate(
+    rtc_task,
+    "rtc_task",
+    250,
+    NULL,
+    2,
+    &handle_task_rtc
+  );
+  configASSERT(status == pdPASS);
 
   status = xTaskCreate(
     print_task,

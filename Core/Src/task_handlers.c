@@ -135,7 +135,8 @@ void rtc_task( void *pvParameters )
 	RTC_TimeTypeDef time = {0};
 	RTC_DateTypeDef date = {0};
 
-	(void)time;
+	int hh_mm_ss_int;
+
 	(void)date;
 
 	for(;;){
@@ -144,10 +145,8 @@ void rtc_task( void *pvParameters )
 
 		/*Print the menu and show current date and time information */
 		xQueueSend(handle_queue_print, (void*) &msg_rtc1, portMAX_DELAY);
-		xQueueSend(handle_queue_print, (void*) &msg_rtc2, portMAX_DELAY);
-
 		show_time_date();
-		
+		xQueueSend(handle_queue_print, (void*) &msg_rtc2, portMAX_DELAY);
 
 		while(curr_state != S_MAIN_MENU){
 
@@ -160,7 +159,11 @@ void rtc_task( void *pvParameters )
 				case S_RTC_MENU:
 
 					/*process RTC menu commands */
-					if ( ! strcmp( (char*) cmd->payload, "0")) curr_state = S_RTC_TIME_CONFIG;
+					if ( ! strcmp( (char*) cmd->payload, "0")) 
+					{
+						curr_state = S_RTC_TIME_CONFIG;
+						xQueueSend(handle_queue_print, (void*) &msg_rtc_hh, portMAX_DELAY);
+					}
 					else if ( ! strcmp( (char*) cmd->payload, "1"))	curr_state = S_RTC_DATE_CONFIG;
 					else if ( ! strcmp( (char*) cmd->payload, "2"))	curr_state = S_RTC_REPORT;
 					else if ( ! strcmp( (char*) cmd->payload, "3"))	curr_state = S_MAIN_MENU;
@@ -172,18 +175,40 @@ void rtc_task( void *pvParameters )
 
 					//TODO: TEST THIS!
 					/*get hh, mm, ss infor and configure RTC */
-					xQueueSend(handle_queue_print, (void*) &msg_rtc_hh, portMAX_DELAY);
+
+				hh_mm_ss_int = atoi((char*) cmd->payload);
+
+					if(hh_mm_ss_int >= 1 && hh_mm_ss_int <= 12)
+					{
+						time.Hours = hh_mm_ss_int;
+						xQueueSend(handle_queue_print, (void*) &msg_rtc_mm, portMAX_DELAY);
+					} else xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
+
 					xTaskNotifyWait(0, 0, &cmd_addr, portMAX_DELAY);
 					cmd = (command_t*) cmd_addr;
 
-					int hh_int = atoi((char*) cmd->payload);
+					hh_mm_ss_int = atoi((char*) cmd->payload);
 
-					/*take care of invalid entries */
-					if(hh_int >= 1 && hh_int <= 12)
-						time.Hours = hh_int;
-					else 
-						xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
+					if(hh_mm_ss_int >= 0 && hh_mm_ss_int <= 59)
+					{
+						time.Minutes = hh_mm_ss_int;
+						xQueueSend(handle_queue_print, (void*) &msg_rtc_ss, portMAX_DELAY);
+						
+					} else xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
 
+					xTaskNotifyWait(0, 0, &cmd_addr, portMAX_DELAY);
+					cmd = (command_t*) cmd_addr;
+
+					hh_mm_ss_int = atoi((char*) cmd->payload);
+
+					if(hh_mm_ss_int >= 0 && hh_mm_ss_int <= 59)
+					{
+						time.Seconds = hh_mm_ss_int;
+					} else xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
+
+					HAL_RTC_SetTime(&hrtc, &time, RTC_FORMAT_BIN);
+
+					curr_state = S_MAIN_MENU;
 
 					break;
 
@@ -206,10 +231,10 @@ void rtc_task( void *pvParameters )
 
 		} //while end
 
-		   /*TODO : Notify menu task */
+		   /*Notify menu task */
+			xTaskNotify(handle_task_menu, 0, eNoAction);
 
-
-		}//while super loop end
+	}//while super loop end
 }
 
 void print_task( void *pvParameters ) 
