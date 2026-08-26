@@ -169,8 +169,15 @@ void rtc_task( void *pvParameters )
 						curr_state = S_RTC_DATE_CONFIG;
 						xQueueSend(handle_queue_print, (void*) &msg_rtc_dd, portMAX_DELAY);
 
-					} else if ( ! strcmp( (char*) cmd->payload, "2"))	curr_state = S_RTC_REPORT;
-					else if ( ! strcmp( (char*) cmd->payload, "3"))	curr_state = S_MAIN_MENU;
+					} else if ( ! strcmp( (char*) cmd->payload, "2"))
+					{
+						curr_state = S_RTC_REPORT;
+						xQueueSend(handle_queue_print, (void*) &msg_rtc_report, portMAX_DELAY);
+
+					} else if ( ! strcmp( (char*) cmd->payload, "3"))
+					{
+						curr_state = S_MAIN_MENU;
+					}
 					else xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
 
 					break;
@@ -220,7 +227,7 @@ void rtc_task( void *pvParameters )
 						curr_state = S_MAIN_MENU;
 						break;
 					}
-					
+
 					rtc_configure_time(&time);
 					curr_state = S_MAIN_MENU;
 
