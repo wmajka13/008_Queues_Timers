@@ -184,8 +184,12 @@ void rtc_task( void *pvParameters )
 					{
 						time.Hours = payload_as_int;
 						xQueueSend(handle_queue_print, (void*) &msg_rtc_mm, portMAX_DELAY);
-					} else xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
-
+					} else 
+					{
+						xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
+						curr_state = S_MAIN_MENU;
+						break;
+					}
 
 					xTaskNotifyWait(0, 0, &cmd_addr, portMAX_DELAY);
 					cmd = (command_t*) cmd_addr;
@@ -196,8 +200,12 @@ void rtc_task( void *pvParameters )
 						time.Minutes = payload_as_int;
 						xQueueSend(handle_queue_print, (void*) &msg_rtc_ss, portMAX_DELAY);
 						
-					} else xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
-
+					} else 
+					{
+						xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
+						curr_state = S_MAIN_MENU;
+						break;
+					}
 
 					xTaskNotifyWait(0, 0, &cmd_addr, portMAX_DELAY);
 					cmd = (command_t*) cmd_addr;
@@ -206,8 +214,13 @@ void rtc_task( void *pvParameters )
 					if(payload_as_int >= 0 && payload_as_int <= 59)
 					{
 						time.Seconds = payload_as_int;
-					} else xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
-
+					} else 
+					{
+						xQueueSend(handle_queue_print, &msg_inv, portMAX_DELAY);
+						curr_state = S_MAIN_MENU;
+						break;
+					}
+					
 					rtc_configure_time(&time);
 					curr_state = S_MAIN_MENU;
 
